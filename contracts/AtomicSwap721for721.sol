@@ -1,6 +1,13 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol"
+
+/**
+ * @title Atomic Swap ERC721 for ERC721
+ * @author Cameron Dimitroff
+ * @notice Contract in charge of atomically swapping an ERC721 for another ERC721 
+ */
 
 contract ERC721AtomicSwap {
 
@@ -9,7 +16,7 @@ contract ERC721AtomicSwap {
         uint256 value;
         bytes32 secretLock;
         bytes32 secretKey;
-        address ethTrader;
+        address ERC721Trader;
         address withdrawTrader;
     }
 
@@ -84,7 +91,7 @@ contract ERC721AtomicSwap {
         Swap memory swap = Swap({
             timelock: _timelock,
             value: msg.value,
-            ethTrader: msg.sender,
+            ERC721Trader: msg.sender,
             withdrawTrader: _withdrawTrader,
             secretLock: _secretLock,
             secretKey: 0x0
@@ -122,7 +129,7 @@ contract ERC721AtomicSwap {
         swapStates[_swapID] = States.EXPIRED;
 
         // Transfer the ETH value from this contract back to the ETH trader.
-        swaps[_swapID].ethTrader.transfer(swaps[_swapID].value);
+        swaps[_swapID].ERC721Trader.transfer(swaps[_swapID].value);
 
         // Logs expire event
         emit LogExpire(_swapID);
@@ -137,7 +144,7 @@ contract ERC721AtomicSwap {
             swap.timelock,
             swap.value,
             swap.withdrawTrader,
-            swap.ethTrader,
+            swap.ERC721Trader,
             swap.secretLock
         );
     }
